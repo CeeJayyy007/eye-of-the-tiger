@@ -11,6 +11,7 @@ button {
   color: white;
   border-radius: 8px;
   cursor: pointer;
+  margin-right: 16px;
 }
 
 h3,
@@ -96,10 +97,24 @@ textarea {
 #upvotes-section button,
 p {
   display: inline-block;
-  margin-right: 16px;
 }
 
 .comment {
   border-bottom: 2px solid black;
   padding: 16px;
+}
+
+#login-form input {
+  display: block;
+  width: 300px;
+  padding: 8px;
+  border-radius: 8px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 18px;
+  border: 2px solid black;
+  margin-bottom: 16px;
+}
+
+.error {
+  color: red;
 }
