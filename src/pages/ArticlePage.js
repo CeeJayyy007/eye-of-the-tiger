@@ -9,8 +9,12 @@ import useUser from "../hooks/useUser";
 import { useNavigate } from "react-router-dom";
 
 const ArticlePage = () => {
-  const [articleInfo, setArticleInfo] = useState({ upvotes: 0, comments: [] });
-
+  const [articleInfo, setArticleInfo] = useState({
+    upvotes: 0,
+    comments: [],
+    canUpvote: false,
+  });
+  const { canUpvote } = articleInfo;
   const { articleId } = useParams();
 
   const { user, isLoading } = useUser();
@@ -27,9 +31,11 @@ const ArticlePage = () => {
       const newArticleInfo = response.data;
       setArticleInfo(newArticleInfo);
     };
-    fetchArticleInfoData();
+    if (!isLoading) {
+      fetchArticleInfoData();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLoading, user]);
 
   const article = articles?.find((article) => article.name === articleId);
 
@@ -58,7 +64,9 @@ const ArticlePage = () => {
       <h1>{article.title}</h1>
       <div id="upvotes-section">
         {user ? (
-          <button onClick={addUpvote}>Upvote</button>
+          <button onClick={addUpvote}>
+            {canUpvote ? "Upvote" : "Already upvoted"}
+          </button>
         ) : (
           <button onClick={navigateToLogin}>Login to upvote</button>
         )}
