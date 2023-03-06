@@ -23,6 +23,10 @@ import {
   ChevronRightIcon,
 } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
+import { useLogoutUserMutation } from "../../redux/api/authApi";
+import { useAppSelector } from "../../redux/hooks";
+import { useEffect } from "react";
+import { useToast } from "../../components";
 
 interface NavItem {
   label: string;
@@ -46,14 +50,53 @@ const NAV_ITEMS: Array<NavItem> = [
 
 const NavBar = () => {
   const { isOpen, onToggle } = useDisclosure();
+  const user = useAppSelector((state) => state.userState.user);
+  const toast = useToast();
 
   const navigate = useNavigate();
+  const [logoutUser, { isLoading, isSuccess, error, isError }] =
+    useLogoutUserMutation();
+
+  console.log("user nav", user);
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast({
+        title: "Log out successful!",
+        status: "success",
+      });
+
+      navigate("/");
+    }
+
+    if (isError) {
+      if (Array.isArray((error as any).data.detail)) {
+        (error as any).data.detail.forEach((el: any) =>
+          toast({
+            title: `${el.msg}`,
+            status: "error",
+          })
+        );
+      } else {
+        toast({
+          title: `${(error as any).data.detail}`,
+          status: "error",
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading]);
+
+  const handleLogout = async () => {
+    logoutUser();
+  };
 
   return (
     <Box>
       <Flex
         bg={useColorModeValue("white", "gray.800")}
         color={useColorModeValue("gray.600", "white")}
+        pt={{ base: 4 }}
         px={{ base: 4 }}
         borderBottom={1}
         borderStyle={"solid"}
@@ -120,6 +163,20 @@ const NavBar = () => {
               }}
             >
               Sign Up
+            </Button>
+            <Button
+              display={{ base: "none", md: "inline-flex" }}
+              fontSize={"sm"}
+              py={"1"}
+              fontWeight={600}
+              color={"white"}
+              bg={"gray.400"}
+              onClick={() => handleLogout()}
+              _hover={{
+                bg: "blue.300",
+              }}
+            >
+              Log Out
             </Button>
           </Stack>
         </Flex>

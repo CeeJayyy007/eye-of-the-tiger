@@ -3,7 +3,7 @@ import { Section } from "../../components";
 
 const Unauthorized = () => (
   <Section>
-    <Heading fontWeight="bold">Unauthorize</Heading>
+    <Heading fontWeight="bold">You are not authorized to be here!</Heading>
   </Section>
 );
 

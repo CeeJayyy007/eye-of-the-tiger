@@ -59,6 +59,7 @@ const SignIn = () => {
         title: "User registered successfully",
         status: "success",
       });
+
       navigate("/home");
       reset();
     }
@@ -81,7 +82,7 @@ const SignIn = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
-  const onSubmit = (values: SignInFormData) => {
+  const onSubmit = async (values: SignInFormData) => {
     signInUser(values);
   };
 

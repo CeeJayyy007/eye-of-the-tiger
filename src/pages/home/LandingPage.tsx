@@ -16,7 +16,11 @@ const LandingPage = () => {
     },
     {
       title: "Admin Dashboard",
-      link: "/admin-backend",
+      link: "/admin",
+    },
+    {
+      title: "Home Page",
+      link: "/home",
     },
   ];
 

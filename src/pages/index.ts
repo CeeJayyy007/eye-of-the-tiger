@@ -6,3 +6,5 @@ export { default as NotFound } from "./notfound/NotFound";
 export { default as Unauthorized } from "./notfound/Unauthorized";
 export { default as Admin } from "./admin/Admin";
 export { default as NavBar } from "./navigation/NavBar";
+export { default as Layout } from "./navigation/Layout";
+export { default as Profile } from "./profile/Profile";
