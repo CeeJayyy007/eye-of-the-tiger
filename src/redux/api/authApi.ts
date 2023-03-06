@@ -2,18 +2,31 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { SignInFormData } from "../../pages/signin/SignIn";
 import { SignUpFormData } from "../../pages/signup/SignUp";
 import { transformSignInData, transformSignUpData } from "../../utils/helper";
+import { RootState } from "../store";
 import { IGenericResponse } from "./types";
-import { userApi } from "./userApi";
+import { IAuthState, setCredentials, logout } from "../features/authSlice";
+// import { userApi } from "./userApi";
 
 let formData = new FormData();
 
+const baseQuery = fetchBaseQuery({
+  baseUrl: `/api/`,
+  credentials: "include",
+  prepareHeaders: (headers, { getState }) => {
+    const token = (getState() as RootState).authState.token;
+
+    if (token) {
+      headers.set("authorization", `Bearer ${token}`);
+    }
+    return headers;
+  },
+});
+
 export const authApi = createApi({
   reducerPath: "authApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: `/api/`,
-  }),
+  baseQuery,
   endpoints: (builder) => ({
-    signUpUser: builder.mutation<IGenericResponse, SignUpFormData>({
+    signUpUser: builder.mutation<IAuthState, SignUpFormData>({
       query(data) {
         formData = transformSignUpData(data);
 
@@ -23,11 +36,18 @@ export const authApi = createApi({
           body: formData,
         };
       },
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          const userData = await queryFulfilled;
+          dispatch(setCredentials({ ...userData.data }));
+          // await dispatch(userApi.endpoints.getMe.initiate(null));
+
+          localStorage.setItem("token", JSON.stringify(userData?.data?.token));
+          localStorage.setItem("user", JSON.stringify(userData?.data?.user));
+        } catch (error) {}
+      },
     }),
-    signInUser: builder.mutation<
-      { access_token: string; status: string },
-      SignInFormData
-    >({
+    signInUser: builder.mutation<IAuthState, SignInFormData>({
       query(data) {
         formData = transformSignInData(data);
 
@@ -35,13 +55,16 @@ export const authApi = createApi({
           url: "token",
           method: "POST",
           body: formData,
-          credentials: "include",
         };
       },
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
-          await queryFulfilled;
-          await dispatch(userApi.endpoints.getMe.initiate(null));
+          const userData = await queryFulfilled;
+          dispatch(setCredentials({ ...userData.data }));
+          // await dispatch(userApi.endpoints.getMe.initiate(null));
+
+          localStorage.setItem("token", JSON.stringify(userData?.data?.token));
+          localStorage.setItem("user", JSON.stringify(userData?.data?.user));
         } catch (error) {}
       },
     }),
@@ -60,8 +83,14 @@ export const authApi = createApi({
       query() {
         return {
           url: "logout",
-          credentials: "include",
         };
+      },
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(logout());
+          localStorage.clear();
+        } catch (error) {}
       },
     }),
   }),

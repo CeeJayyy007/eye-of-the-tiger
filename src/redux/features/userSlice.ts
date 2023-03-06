@@ -15,7 +15,17 @@ export const userSlice = createSlice({
   reducers: {
     logout: () => initialState,
     setUser: (state, action: PayloadAction<IUser>) => {
-      state.user = action.payload;
+      // state.user = action.payload;
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          name: action.payload.email,
+          first_name: action.payload.firstName,
+          last_name: action.payload.lastName,
+        })
+      );
+      // state.user.email = action.payload.email;
+      // state.user.token = action.payload.token;
     },
   },
 });

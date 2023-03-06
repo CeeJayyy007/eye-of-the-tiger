@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import { authApi } from "./api/authApi";
 import { userApi } from "./api/userApi";
 import userReducer from "./features/userSlice";
+import authReducer from "./features/authSlice";
 
 export const store = configureStore({
   reducer: {
     [authApi.reducerPath]: authApi.reducer,
     [userApi.reducerPath]: userApi.reducer,
     userState: userReducer,
+    authState: authReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
 

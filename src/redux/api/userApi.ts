@@ -2,12 +2,12 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setUser } from "../features/userSlice";
 import { IUser } from "./types";
 
-const BASE_URL = process.env.REACT_APP_SERVER_ENDPOINT as string;
+// const BASE_URL = process.env.REACT_APP_SERVER_ENDPOINT as string;
 
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${BASE_URL}/api/users/`,
+    baseUrl: `/api/v1/users/`,
   }),
   tagTypes: ["User"],
   endpoints: (builder) => ({
@@ -23,6 +23,7 @@ export const userApi = createApi({
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
+          console.log("user data", data);
           dispatch(setUser(data));
         } catch (error) {}
       },
